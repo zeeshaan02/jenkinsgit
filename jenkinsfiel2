@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = 'https://github.com/zeeshaan02/jenkinsgit.git'
+        BRANCH = 'main'   // change to 'master' if your repo uses master
+    }
+
+    stages {
+        stage('Pull All Files from Git') {
+            steps {
+                echo "Cloning entire repository from ${REPO_URL}"
+                git branch: "${BRANCH}", url: "${REPO_URL}"
+
+                echo "✅ Listing all pulled files:"
+                sh 'ls -R'   // lists all files recursively
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building application...'
+                // Example for Java: sh 'mvn clean package'
+                // Example for Node.js: sh 'npm install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                // Example: sh 'mvn test' or 'npm test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                // Example deploy: Docker, scp, or service restart
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '🎉 Build, Test, Deploy successful!'
+        }
+        failure {
+            echo '❌ Pipeline failed.'
+        }
+    }
+}
