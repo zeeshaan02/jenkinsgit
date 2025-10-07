@@ -1,0 +1,71 @@
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = 'https://github.com/zeeshaan02/jenkinsgit.git'
+        BRANCH = 'main'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Checking out branch ${BRANCH} from ${REPO_URL}"
+                git branch: "${BRANCH}", url: "${REPO_URL}"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Building application..."
+                // Replace with your build command. For example:
+                // For Java / Maven:
+                // sh 'mvn clean package -DskipTests'
+                //
+                // For Node.js:
+                // sh 'npm install'
+                //
+                // For Python (if using e.g. setup.py or similar):
+                // sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo "Running tests..."
+                // For Java / Maven:
+                // sh 'mvn test'
+                //
+                // For Node.js:
+                // sh 'npm test'
+                //
+                // For Python:
+                // sh 'pytest'  (or your test command)
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying application..."
+                // Add your deployment commands here. Examples:
+                // — Copy artifacts to server
+                // — SSH to remote and restart services
+                // — Docker build / push / run
+                // e.g.:
+                // sh '''
+                // ssh user@yourserver "systemctl stop myapp"
+                // scp target/*.jar user@yourserver:/opt/app/
+                // ssh user@yourserver "systemctl start myapp"
+                // '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "🎉 Pipeline succeeded!"
+        }
+        failure {
+            echo "⚠️ Pipeline failed."
+        }
+    }
+}
