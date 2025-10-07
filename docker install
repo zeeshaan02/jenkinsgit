@@ -1,0 +1,88 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Update System') {
+            steps {
+                echo '🔄 Updating system packages...'
+                sh '''
+                sudo apt-get update -y
+                sudo apt-get upgrade -y
+                '''
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo '📦 Installing dependencies...'
+                sh '''
+                sudo apt-get install ca-certificates curl gnupg lsb-release -y
+                '''
+            }
+        }
+
+        stage('Add Docker GPG Key & Repo') {
+            steps {
+                echo '🔑 Adding Docker GPG key and repository...'
+                sh '''
+                sudo mkdir -p /etc/apt/keyrings
+                curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+                echo \
+                "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+                https://download.docker.com/linux/ubuntu \
+                $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+                '''
+            }
+        }
+
+        stage('Install Docker Engine') {
+            steps {
+                echo '🐳 Installing Docker Engine...'
+                sh '''
+                sudo apt-get update -y
+                sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+                '''
+            }
+        }
+
+        stage('Enable Docker Service') {
+            steps {
+                echo '🚀 Enabling and starting Docker service...'
+                sh '''
+                sudo systemctl enable docker
+                sudo systemctl start docker
+                '''
+            }
+        }
+
+        stage('Verify Docker Installation') {
+            steps {
+                echo '✅ Verifying Docker...'
+                sh '''
+                docker --version
+                sudo docker run hello-world || true
+                '''
+            }
+        }
+
+        stage('Allow Jenkins to Use Docker') {
+            steps {
+                echo '👤 Adding Jenkins user to Docker group...'
+                sh '''
+                sudo usermod -aG docker jenkins
+                sudo systemctl restart jenkins
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '🎉 Docker installation completed successfully!'
+        }
+        failure {
+            echo '❌ Docker installation failed. Check logs for details.'
+        }
+    }
+}
