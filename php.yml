@@ -1,0 +1,29 @@
+---
+- name: Install and configure PHP on existing Apache server
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Install PHP and related packages
+      yum:
+        name:
+          - php
+          - php-mysqlnd
+          - php-cli
+        state: present
+
+    - name: Ensure Apache (httpd) is running
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Create a PHP test page
+      copy:
+        dest: /var/www/html/index.php
+        content: |
+          <?php
+          echo "<h2>PHP is successfully installed on Zeeshan’s EC2 🚀</h2>";
+          phpinfo();
+          ?>
+        mode: '0644'
