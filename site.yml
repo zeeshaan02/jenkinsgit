@@ -1,0 +1,25 @@
+---
+- name: Deploy website on Amazon Linux EC2
+  hosts: web
+  become: yes
+
+  tasks:
+    - name: Install Apache (httpd)
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start and enable Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Deploy custom index.html
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <html>
+          <head><title>Zeeshan Cloud Site</title></head>
+          <body style="background-color:#e3f2fd;
+
