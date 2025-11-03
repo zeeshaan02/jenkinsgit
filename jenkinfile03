@@ -13,7 +13,7 @@ pipeline {
             steps {
                 echo "🚀 Running Ansible Playbook..."
                 sh '''
-                ansible-playbook site.yml -i /etc/ansible/hosts
+                ansible-playbook php.yml -i /etc/ansible/hosts
                 '''
             }
         }
