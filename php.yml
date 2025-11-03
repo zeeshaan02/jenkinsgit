@@ -1,6 +1,6 @@
 ---
 - name: Install and configure PHP on existing Apache server
-  hosts: webserver
+  hosts: web
   become: yes
 
   tasks:
