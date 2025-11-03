@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo "📦 Cloning repository..."
+                git branch: 'master', url: 'https://github.com/zeeshaan02/jenkinsgit.git'
+            }
+        }
+
+        stage('Run Ansible Playbook') {
+            steps {
+                echo "🚀 Running Ansible Playbook..."
+                sh '''
+                ansible-playbook site.yml -i /etc/ansible/hosts
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Deployment completed successfully!"
+        }
+        failure {
+            echo "❌ Deployment failed. Check Jenkins logs."
+        }
+    }
+}
+
