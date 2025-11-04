@@ -1,6 +1,6 @@
 ---
 - name: Install and configure Docker on Amazon Linux 2
-  hosts: all
+  hosts: web
   become: yes
 
   tasks:
